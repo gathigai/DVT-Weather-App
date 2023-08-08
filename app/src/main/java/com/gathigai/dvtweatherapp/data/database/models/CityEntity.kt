@@ -12,9 +12,9 @@ import com.google.gson.annotations.SerializedName
 data class CityEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long? = null,
-    val isFavourite: Boolean,
+    val isFavourite: Boolean?,
     @ColumnInfo(name = "is_current")
-    val isCurrent: Boolean,
+    val isCurrent: Boolean?,
     val apiId: Int?,
     val name: String?,
     @Embedded(prefix = "city")

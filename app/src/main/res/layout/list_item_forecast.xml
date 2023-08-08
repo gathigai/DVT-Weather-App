@@ -39,7 +39,7 @@
             app:layout_constraintEnd_toStartOf="@+id/text_list_temparature"
             app:layout_constraintStart_toEndOf="@+id/text_day"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/clear" />
+            app:srcCompat="@android:drawable/btn_dialog" />
 
         <TextView
             android:id="@+id/text_list_temparature"
