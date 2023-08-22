@@ -13,7 +13,7 @@ data class SingleLocationDataResponse(
     @field:SerializedName("rain") var rain: Rain? = null,
     @field:SerializedName("snow") var snow: Snow? = null,
     @field:SerializedName("clouds") var clouds: Clouds? = null,
-    @field:SerializedName("dt") var dataCalculationTime: Int? = null,
+    @field:SerializedName("dt") var dataCalculationTime: String? = null,
     @field:SerializedName("sys") var sys: Sys? = null,
     @field:SerializedName("timezone") var timezone: Int? = null,
     @field:SerializedName("id") var id: Int? = null,

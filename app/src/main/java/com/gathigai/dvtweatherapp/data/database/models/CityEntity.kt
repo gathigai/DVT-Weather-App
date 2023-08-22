@@ -11,7 +11,7 @@ import com.google.gson.annotations.SerializedName
 @Entity(tableName = "cities")
 data class CityEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Long? = null,
+    val id: Long?,
     val isFavourite: Boolean?,
     @ColumnInfo(name = "is_current")
     val isCurrent: Boolean?,
@@ -26,14 +26,14 @@ data class CityEntity(
     val sunset: Int?
 )
 
-fun CityEntity.asDomainModel() = City(
-    id = id,
-    isFavourite = isFavourite,
-    isCurrent = isCurrent,
-    name = name,
-    coordinates = coordinates,
-    country = country,
-    timezone = timezone,
-    sunrise = sunrise,
-    sunset = sunset
+fun CityEntity?.asDomainModel() = City(
+    id = this?.id,
+    isFavourite = this?.isFavourite,
+    isCurrent = this?.isCurrent,
+    name = this?.name,
+    coordinates = this?.coordinates,
+    country = this?.country,
+    timezone = this?.timezone,
+    sunrise = this?.sunrise,
+    sunset = this?.sunset
 )

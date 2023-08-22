@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.gathigai.dvtweatherapp.R
 import com.gathigai.dvtweatherapp.data.database.models.WeatherDetailEntity
 import com.gathigai.dvtweatherapp.databinding.ListItemForecastBinding
 import com.gathigai.dvtweatherapp.ui.adapters.diff.ForecastDiffCallback
@@ -38,6 +39,22 @@ class ForecastRecyclerAdapter(
                 binding.root.setOnClickListener{onItemClickListener.onItemClicked(weatherDetailEntity)}
                 binding.data = weatherDetailEntity
                 binding.converter = BindingConverter()
+
+                when(weatherDetailEntity.weather[0].main){
+                    "Clouds", "Mist", "Smoke", "Haze", "Dust", "Fog", "Sand", "Ash", "Squall", "Tornado" -> {
+                        binding.imageStatus.setBackgroundResource(R.drawable.partlysunny)
+                    }
+                    "Rain", "Thunderstorm", "Drizzle", "Snow" -> {
+                        binding.imageStatus.setBackgroundResource(R.drawable.rain)
+                    }
+                    "Clear" -> {
+                        binding.imageStatus.setBackgroundResource(R.drawable.clear)
+                    }
+                    else -> {
+                        binding.imageStatus.setBackgroundResource(R.drawable.clear)
+                    }
+                }
+
                 binding.executePendingBindings()
             }
         }

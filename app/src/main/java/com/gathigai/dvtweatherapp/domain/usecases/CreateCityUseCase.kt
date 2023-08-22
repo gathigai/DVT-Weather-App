@@ -1,6 +1,7 @@
 package com.gathigai.dvtweatherapp.domain.usecases
 
 import com.gathigai.dvtweatherapp.data.database.models.CityEntity
+import com.gathigai.dvtweatherapp.data.database.models.asDomainModel
 import com.gathigai.dvtweatherapp.data.repository.CityRepository
 import com.gathigai.dvtweatherapp.domain.City
 import kotlinx.coroutines.flow.*
@@ -14,22 +15,21 @@ class CreateCityUseCase @Inject constructor(
         Timber.i("Create City Use case $city" )
         if (city.coordinates?.latitude.isNullOrEmpty()){
             Timber.i("Create City Use case latitude is empty" )
-            return
         } else if (city.coordinates?.longitude.isNullOrEmpty()){
-            Timber.i("Create City Use case logitude is empty" )
-            return
+            Timber.i("Create City Use case longitude is empty" )
         } else {
-            val existingCityFlow = cityRepository.getCityByCoordinates(
-                city.coordinates?.latitude!!,
-                city.coordinates.longitude!!
-            )
-            val existingCity = existingCityFlow.firstOrNull()
+            val existingCityFlow =  city.coordinates?.let { coordinates ->
+                cityRepository.getCityByCoordinates(
+                    coordinates.latitude!!,
+                    coordinates.longitude!!
+                )
+            }
+            val existingCity = existingCityFlow?.firstOrNull()
 
-            if(existingCity != null){
-               if (existingCity.coordinates?.latitude.equals(city.coordinates.latitude) &&
-                   existingCity.coordinates?.longitude.equals(city.coordinates.longitude)) {
-                   Timber.d("The city exists")
-               }
+           if(existingCity != null
+                && existingCity.coordinates?.latitude.equals(city.coordinates!!.latitude)
+                && existingCity.coordinates?.longitude.equals(city.coordinates!!.longitude)){
+                Timber.d("The city exists")
             } else{
                 Timber.i("Create city")
                 cityRepository.createCity(city)

@@ -14,7 +14,7 @@ import com.gathigai.dvtweatherapp.util.WeatherListConverter
         CityEntity::class,
         WeatherDetailEntity::class
     ],
-    version = 7,
+    version = 9,
     exportSchema = true
 )
 @TypeConverters(

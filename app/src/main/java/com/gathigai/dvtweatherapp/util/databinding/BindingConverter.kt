@@ -1,6 +1,9 @@
 package com.gathigai.dvtweatherapp.util.databinding
 
+import android.widget.TextView
+import androidx.databinding.BindingAdapter
 import androidx.databinding.InverseMethod
+import com.gathigai.dvtweatherapp.util.getDayOfWeek
 
 class BindingConverter {
 

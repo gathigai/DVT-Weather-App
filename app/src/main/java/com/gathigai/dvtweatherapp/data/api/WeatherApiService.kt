@@ -24,7 +24,6 @@ interface WeatherApiService {
     suspend fun locationForecastData(
         @Query("lat") lat: String,
         @Query("lon") lon: String,
-        @Query("cnt") count: String = "5",
         @Query("units") units: ApiUnitOfMeasurement = ApiUnitOfMeasurement.METRIC,
         @Query("appid") clientId: String = "c5c113bc55983bc0971a23aa1f0aa7e9" //BuildConfig.UNSPLASH_ACCESS_KEY
     ): ForecastDataResponse

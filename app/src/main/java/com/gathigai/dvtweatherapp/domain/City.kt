@@ -6,16 +6,29 @@ import com.google.gson.annotations.SerializedName
 
 
 data class City(
-    val id: Long?,
-    val isFavourite: Boolean?,
-    val isCurrent: Boolean?,
-    val name: String?,
-    val coordinates: Coordinates?,
-    val country: String?,
-    val timezone: Int?,
-    val sunrise: Int?,
-    val sunset: Int?
-)
+    var id: Long?,
+    var isFavourite: Boolean?,
+    var isCurrent: Boolean?,
+    var name: String?,
+    var coordinates: Coordinates?,
+    var country: String?,
+    var timezone: Int?,
+    var sunrise: Int?,
+    var sunset: Int?
+){
+    constructor():
+            this(
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+                )
+}
 
 fun City.asDataModel() = CityEntity(
     isFavourite = isFavourite?:false,
@@ -27,5 +40,6 @@ fun City.asDataModel() = CityEntity(
     sunrise = sunrise,
     sunset = sunset,
     apiId = null,
-    population = null
+    population = null,
+    id = id
 )

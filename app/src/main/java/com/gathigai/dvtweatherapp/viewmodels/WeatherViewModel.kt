@@ -1,28 +1,22 @@
 package com.gathigai.dvtweatherapp.viewmodels
 
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gathigai.dvtweatherapp.data.Coordinates
-import com.gathigai.dvtweatherapp.data.database.models.WeatherDetailEntity
-import com.gathigai.dvtweatherapp.data.database.models.asDomainModel
 import com.gathigai.dvtweatherapp.data.repository.CityRepository
 import com.gathigai.dvtweatherapp.data.repository.WeatherDataRepository
 import com.gathigai.dvtweatherapp.domain.City
 import com.gathigai.dvtweatherapp.domain.usecases.CreateCityUseCase
-import com.gathigai.dvtweatherapp.domain.usecases.GetCurrentWeatherUseCase
-import com.gathigai.dvtweatherapp.domain.usecases.GetWeatherForecastUseCase
+import com.gathigai.dvtweatherapp.domain.usecases.RequestWeatherForecastUseCase
+import com.gathigai.dvtweatherapp.domain.usecases.RequestCityWeatherUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class CurrentWeatherViewModel @Inject constructor(
-    private val getCurrentWeatherUseCase: GetCurrentWeatherUseCase,
-    private val getWeatherForecastUseCase: GetWeatherForecastUseCase,
+class WeatherViewModel @Inject constructor(
+    private val requestCityWeatherUseCase: RequestCityWeatherUseCase,
+    private val requestWeatherForecastUseCase: RequestWeatherForecastUseCase,
     private val createCityUseCase: CreateCityUseCase,
     private val weatherDataRepository: WeatherDataRepository,
     private val cityRepository: CityRepository
@@ -53,7 +47,7 @@ class CurrentWeatherViewModel @Inject constructor(
        return flow
    }*/
 
-    fun forecastWeather(city: City) = weatherDataRepository.weatherForecast(city)
+    fun forecastWeather(city: City) = weatherDataRepository.getCityWeatherForecast(city)
 
     fun getLocationData(){
 
@@ -61,8 +55,8 @@ class CurrentWeatherViewModel @Inject constructor(
             createCityUseCase.invoke(city)
             val currentCity = cityRepository.getCurrentCity()
             currentCity.collect{
-                getWeatherForecastUseCase(it)
-                getCurrentWeatherUseCase(it)
+                requestWeatherForecastUseCase(it)
+                requestCityWeatherUseCase(it)
             }
         }
     }

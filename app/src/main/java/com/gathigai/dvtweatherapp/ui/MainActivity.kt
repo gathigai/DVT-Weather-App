@@ -1,5 +1,6 @@
 package com.gathigai.dvtweatherapp.ui
 
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -8,6 +9,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
+import androidx.core.app.ActivityCompat
 import com.gathigai.dvtweatherapp.R
 import com.gathigai.dvtweatherapp.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint

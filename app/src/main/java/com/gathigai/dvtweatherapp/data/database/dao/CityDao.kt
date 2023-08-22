@@ -8,6 +8,9 @@ import kotlinx.coroutines.flow.Flow
 interface CityDao {
 
     @Insert
+    suspend fun insertCity(entity: CityEntity): Long
+
+    @Insert
     suspend fun insertCities(vararg entities: CityEntity): List<Long>
 
     @Update
@@ -21,6 +24,9 @@ interface CityDao {
 
     @Query(value = "SELECT * FROM cities WHERE is_current=true")
     fun getCurrentCity(): Flow<CityEntity>
+
+    @Query("SELECT * FROM cities WHERE id = :cityId")
+    fun getCityById(cityId: Long):Flow<CityEntity>
 
     @Query("SELECT * FROM cities WHERE citylongitude = :longitude AND citylatitude= :latitude")
     fun getCityByCoordinates(latitude: String, longitude: String): Flow<CityEntity>

@@ -40,7 +40,7 @@ data class WeatherDetailEntity (
         val snow: Snow?,
         @Embedded(prefix = "clouds")
         val clouds: Clouds?,
-        val dataCalculationTime: Int?,
+        val dataCalculationTime: String?,
         @Embedded(prefix = "sys")
         val sys: Sys?,
         val timezone: Int?,

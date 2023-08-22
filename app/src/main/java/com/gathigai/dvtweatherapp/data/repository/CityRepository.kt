@@ -24,8 +24,11 @@ class CityRepository @Inject constructor(
     fun getCityByCoordinates(latitude: String, longitude: String) =
         cityDao.getCityByCoordinates(latitude, longitude)
 
-    suspend fun createCity(city: City) {
-        cityDao.insertCities(city.asDataModel())
+    fun getCityById(cityId: Long) = cityDao.getCityById(cityId)
+
+
+    suspend fun createCity(city: City): Long {
+        return cityDao.insertCity(city.asDataModel())
     }
 
 }
