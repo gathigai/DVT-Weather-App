@@ -6,7 +6,6 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.gathigai.dvtweatherapp.data.Coordinates
 import com.gathigai.dvtweatherapp.domain.City
-import com.google.gson.annotations.SerializedName
 
 @Entity(tableName = "cities")
 data class CityEntity(

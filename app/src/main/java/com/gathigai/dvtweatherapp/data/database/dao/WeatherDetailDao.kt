@@ -1,6 +1,10 @@
 package com.gathigai.dvtweatherapp.data.database.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Update
+import androidx.room.Upsert
 import com.gathigai.dvtweatherapp.data.database.models.WeatherDetailEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -25,10 +29,15 @@ interface WeatherDetailDao {
     @Query(value = "SELECT * FROM weather_details WHERE is_current = true")
     fun getCurrentWeatherDetails(): Flow<WeatherDetailEntity>
 
-    @Query(value = """ 
+    @Query(
+        value = """ 
         SELECT * FROM weather_details WHERE city_id = :cityId AND is_current = :isCurrent
-    """)
-    fun getWeatherDetailsByCityAndCurrent(cityId: Long, isCurrent: Boolean): Flow<List<WeatherDetailEntity>>
+    """
+    )
+    fun getWeatherDetailsByCityAndCurrent(
+        cityId: Long,
+        isCurrent: Boolean
+    ): Flow<List<WeatherDetailEntity>>
 
     @Query(
         value = "DELETE FROM weather_details WHERE is_current = true"
@@ -38,12 +47,14 @@ interface WeatherDetailDao {
     @Query(
         value = """
             DELETE FROM weather_details WHERE id in (:ids)
-        """)
+        """
+    )
     suspend fun deleteWeatherDetails(vararg ids: String)
 
     @Query(
         value = """
             DELETE FROM weather_details WHERE city_id = :cityId
-        """)
-    suspend fun deleteWeatherDetailsByCityId( cityId: Long)
+        """
+    )
+    suspend fun deleteWeatherDetailsByCityId(cityId: Long)
 }

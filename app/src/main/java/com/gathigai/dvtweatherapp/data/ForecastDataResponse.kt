@@ -1,6 +1,5 @@
 package com.gathigai.dvtweatherapp.data
 
-import com.gathigai.dvtweatherapp.data.database.models.WeatherDetailEntity
 import com.google.gson.annotations.SerializedName
 
 data class ForecastDataResponse(

@@ -7,7 +7,7 @@ import javax.inject.Inject
 class RequestWeatherForecastUseCase @Inject constructor(
     private val weatherDataRepository: WeatherDataRepository
 ) {
-    suspend operator fun invoke(city: City){
+    suspend operator fun invoke(city: City) {
         return weatherDataRepository.getLocationForecastWeatherData(city)
     }
 }

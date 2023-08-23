@@ -22,7 +22,7 @@ data class SingleLocationDataResponse(
 )
 
 fun SingleLocationDataResponse.asDataModel() = WeatherDetailEntity(
-    cityId=null,
+    cityId = null,
     coordinates = coordinates,
     weather = weather,
     base = base,

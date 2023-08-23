@@ -5,7 +5,11 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
-abstract class EmptyStateRecyclerViewAdapter<T, VH : RecyclerView.ViewHolder>(val emptyView: View? = null, val listView: View, diffCallBack: DiffUtil.ItemCallback<T>) : ListAdapter<T, VH>(diffCallBack) {
+abstract class EmptyStateRecyclerViewAdapter<T, VH : RecyclerView.ViewHolder>(
+    val emptyView: View? = null,
+    val listView: View,
+    diffCallBack: DiffUtil.ItemCallback<T>
+) : ListAdapter<T, VH>(diffCallBack) {
     override fun submitList(list: List<T>?) {
         super.submitList(list)
         if (list == null || list.isEmpty()) {

@@ -28,11 +28,12 @@ interface WeatherApiService {
         @Query("appid") clientId: String = "c5c113bc55983bc0971a23aa1f0aa7e9" //BuildConfig.UNSPLASH_ACCESS_KEY
     ): ForecastDataResponse
 
-    companion object{
+    companion object {
         private const val BASE_URL = "https://api.openweathermap.org/data/2.5/"
 
         fun create(): WeatherApiService {
-            val logger = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
+            val logger =
+                HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
 
             val client = OkHttpClient.Builder()
                 .addInterceptor(logger)

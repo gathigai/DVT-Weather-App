@@ -25,8 +25,10 @@ class ForecastRecyclerAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ListItemForecastBinding
-            .inflate(LayoutInflater
-                .from(parent.context), parent, false)
+            .inflate(
+                LayoutInflater
+                    .from(parent.context), parent, false
+            )
         return ViewHolder(binding)
     }
 
@@ -35,29 +37,32 @@ class ForecastRecyclerAdapter(
 
     inner class ViewHolder(private var binding: ListItemForecastBinding) :
         RecyclerView.ViewHolder(binding.root) {
-            fun bind(weatherDetailEntity: WeatherDetailEntity){
-                binding.root.setOnClickListener{onItemClickListener.onItemClicked(weatherDetailEntity)}
-                binding.data = weatherDetailEntity
-                binding.converter = BindingConverter()
+        fun bind(weatherDetailEntity: WeatherDetailEntity) {
+            binding.root.setOnClickListener { onItemClickListener.onItemClicked(weatherDetailEntity) }
+            binding.data = weatherDetailEntity
+            binding.converter = BindingConverter()
 
-                when(weatherDetailEntity.weather[0].main){
-                    "Clouds", "Mist", "Smoke", "Haze", "Dust", "Fog", "Sand", "Ash", "Squall", "Tornado" -> {
-                        binding.imageStatus.setBackgroundResource(R.drawable.partlysunny)
-                    }
-                    "Rain", "Thunderstorm", "Drizzle", "Snow" -> {
-                        binding.imageStatus.setBackgroundResource(R.drawable.rain)
-                    }
-                    "Clear" -> {
-                        binding.imageStatus.setBackgroundResource(R.drawable.clear)
-                    }
-                    else -> {
-                        binding.imageStatus.setBackgroundResource(R.drawable.clear)
-                    }
+            when (weatherDetailEntity.weather[0].main) {
+                "Clouds", "Mist", "Smoke", "Haze", "Dust", "Fog", "Sand", "Ash", "Squall", "Tornado" -> {
+                    binding.imageStatus.setBackgroundResource(R.drawable.partlysunny)
                 }
 
-                binding.executePendingBindings()
+                "Rain", "Thunderstorm", "Drizzle", "Snow" -> {
+                    binding.imageStatus.setBackgroundResource(R.drawable.rain)
+                }
+
+                "Clear" -> {
+                    binding.imageStatus.setBackgroundResource(R.drawable.clear)
+                }
+
+                else -> {
+                    binding.imageStatus.setBackgroundResource(R.drawable.clear)
+                }
             }
+
+            binding.executePendingBindings()
         }
+    }
 
     interface OnItemSelectedListener {
         fun onItemSelected(item: WeatherDetailEntity)

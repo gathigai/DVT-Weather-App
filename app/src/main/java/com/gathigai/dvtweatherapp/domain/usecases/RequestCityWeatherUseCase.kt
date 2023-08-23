@@ -10,6 +10,6 @@ class RequestCityWeatherUseCase @Inject constructor(
     private val weatherDataRepository: WeatherDataRepository
 ) {
     suspend operator fun invoke(city: City) {
-       weatherDataRepository.requestSingleLocationWeatherData(city)
+        weatherDataRepository.requestSingleLocationWeatherData(city)
     }
 }

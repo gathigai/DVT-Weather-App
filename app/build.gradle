@@ -19,9 +19,9 @@ android {
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments += [
-                        "room.schemaLocation":"$projectDir/schemas".toString(),
-                        "room.incremental":"true",
-                        "room.expandProjection":"true"]
+                        "room.schemaLocation"  : "$projectDir/schemas".toString(),
+                        "room.incremental"     : "true",
+                        "room.expandProjection": "true"]
             }
         }
 
@@ -64,6 +64,7 @@ dependencies {
     //Dependency Injection
     implementation 'com.google.dagger:hilt-android:2.44'
     implementation 'com.google.android.gms:play-services-location:21.0.1'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.1'
     kapt 'com.google.dagger:hilt-android-compiler:2.44'
     //Room
     implementation "androidx.room:room-runtime:2.5.0"

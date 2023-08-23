@@ -20,7 +20,7 @@ import com.gathigai.dvtweatherapp.util.WeatherListConverter
 @TypeConverters(
     WeatherListConverter::class
 )
-abstract class AppDatabase: RoomDatabase(){
+abstract class AppDatabase : RoomDatabase() {
     abstract fun cityDao(): CityDao
     abstract fun weatherDetailDao(): WeatherDetailDao
 }

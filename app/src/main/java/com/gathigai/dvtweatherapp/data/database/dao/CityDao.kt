@@ -26,7 +26,7 @@ interface CityDao {
     fun getCurrentCity(): Flow<CityEntity>
 
     @Query("SELECT * FROM cities WHERE id = :cityId")
-    fun getCityById(cityId: Long):Flow<CityEntity>
+    fun getCityById(cityId: Long): Flow<CityEntity>
 
     @Query("SELECT * FROM cities WHERE citylongitude = :longitude AND citylatitude= :latitude")
     fun getCityByCoordinates(latitude: String, longitude: String): Flow<CityEntity>
@@ -34,6 +34,7 @@ interface CityDao {
     @Query(
         value = """
             DELETE FROM cities WHERE id in (:ids)
-        """)
+        """
+    )
     suspend fun deleteCities(vararg ids: String)
 }

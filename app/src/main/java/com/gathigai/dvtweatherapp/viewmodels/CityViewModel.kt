@@ -8,7 +8,6 @@ import com.gathigai.dvtweatherapp.domain.usecases.CreateCityUseCase
 import com.gathigai.dvtweatherapp.domain.usecases.GetCurrentCityUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
@@ -19,14 +18,14 @@ import javax.inject.Inject
 class CityViewModel @Inject constructor(
     private val createCityUseCase: CreateCityUseCase,
     private val currentCityUseCase: GetCurrentCityUseCase
-): ViewModel() {
+) : ViewModel() {
 
-    val currentCity: Flow<City> =  flow {
+    val currentCity: Flow<City> = flow {
         val city = currentCityUseCase.invoke()
         emitAll(city)
     }
 
-    fun createCity(name:String, latitude: Double, longitude: Double, isCurrent: Boolean){
+    fun createCity(name: String, latitude: Double, longitude: Double, isCurrent: Boolean) {
         val city = City(
             name = name,
             isFavourite = false,
@@ -42,8 +41,8 @@ class CityViewModel @Inject constructor(
         createCity(city)
     }
 
-    fun createCity(city: City){
-        if (city.name.isNullOrEmpty() && city.coordinates == null){
+    fun createCity(city: City) {
+        if (city.name.isNullOrEmpty() && city.coordinates == null) {
             Timber.i("City cannot be created when null")
         } else {
             viewModelScope.launch {

@@ -2,7 +2,6 @@ package com.gathigai.dvtweatherapp.domain
 
 import com.gathigai.dvtweatherapp.data.Coordinates
 import com.gathigai.dvtweatherapp.data.database.models.CityEntity
-import com.google.gson.annotations.SerializedName
 
 
 data class City(
@@ -15,8 +14,8 @@ data class City(
     var timezone: Int?,
     var sunrise: Int?,
     var sunset: Int?
-){
-    constructor():
+) {
+    constructor() :
             this(
                 null,
                 null,
@@ -27,12 +26,12 @@ data class City(
                 null,
                 null,
                 null
-                )
+            )
 }
 
 fun City.asDataModel() = CityEntity(
-    isFavourite = isFavourite?:false,
-    isCurrent = isCurrent?:false,
+    isFavourite = isFavourite ?: false,
+    isCurrent = isCurrent ?: false,
     name = name,
     coordinates = coordinates,
     country = country,

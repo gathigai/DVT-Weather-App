@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
             name="weather"
             type="com.gathigai.dvtweatherapp.data.database.models.WeatherDetailEntity" />
@@ -32,6 +33,7 @@
             android:layout_height="0dp"
             android:layout_marginBottom="1dp"
             android:background="@color/rainy_background"
+            android:fitsSystemWindows="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -201,5 +203,4 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.51" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
-<!--android:text="@{@string/template_label_currency_kes(loan.principalAmount)}"-->
+</layout><!--android:text="@{@string/template_label_currency_kes(loan.principalAmount)}"-->

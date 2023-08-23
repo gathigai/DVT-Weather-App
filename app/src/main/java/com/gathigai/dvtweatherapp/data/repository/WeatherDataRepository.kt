@@ -19,8 +19,11 @@ class WeatherDataRepository @Inject constructor(
 
     val todayWeather = weatherDetailDao.getCurrentWeatherDetails()
 
-    fun getCityWeatherForecast(city: City) = weatherDetailDao.getWeatherDetailsByCityAndCurrent(city.id!!, false)
-    fun getCityCurrentWeather(city: City) = weatherDetailDao.getWeatherDetailsByCityAndCurrent(city.id!!, true)
+    fun getCityWeatherForecast(city: City) =
+        weatherDetailDao.getWeatherDetailsByCityAndCurrent(city.id!!, false)
+
+    fun getCityCurrentWeather(city: City) =
+        weatherDetailDao.getWeatherDetailsByCityAndCurrent(city.id!!, true)
 
     suspend fun requestSingleLocationWeatherData(city: City) {
         withContext(Dispatchers.IO) {
@@ -43,19 +46,22 @@ class WeatherDataRepository @Inject constructor(
             )
 
 
-
             val forecastWeather: List<WeatherDetailEntity> = locationForecastData.list
                 .map {
-                        val data = it.asDataModel()
-                        data.cityId = city.id
-                        data.isCurrent = false
+                    val data = it.asDataModel()
+                    data.cityId = city.id
+                    data.isCurrent = false
                     return@map data
                 }
 
             Timber.d("Forecast: ${forecastWeather.size}")
             weatherDetailDao.deleteWeatherDetailsByCityId(city.id!!)
 
-            forecastWeather.forEach { forecastWeather -> weatherDetailDao.insertWeatherDetail(forecastWeather) }
+            forecastWeather.forEach { forecastWeather ->
+                weatherDetailDao.insertWeatherDetail(
+                    forecastWeather
+                )
+            }
 //            weatherDetailDao.insertWeatherDetails(forecastWeather)
         }
     }

@@ -5,6 +5,6 @@ import androidx.databinding.BindingAdapter
 import com.gathigai.dvtweatherapp.util.getDayOfWeek
 
 @BindingAdapter("app:showDate")
-fun showDay(view: TextView, text: String?){
+fun showDay(view: TextView, text: String?) {
     view.text = getDayOfWeek(text?.toInt()!!)
 }

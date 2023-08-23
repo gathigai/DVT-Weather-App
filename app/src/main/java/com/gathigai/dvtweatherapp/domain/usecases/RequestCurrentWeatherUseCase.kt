@@ -3,7 +3,7 @@ package com.gathigai.dvtweatherapp.domain.usecases
 import com.gathigai.dvtweatherapp.data.repository.CityRepository
 import com.gathigai.dvtweatherapp.data.repository.WeatherDataRepository
 import com.gathigai.dvtweatherapp.domain.City
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.filter
 import javax.inject.Inject
 
 class RequestCurrentWeatherUseCase @Inject constructor(
@@ -14,6 +14,6 @@ class RequestCurrentWeatherUseCase @Inject constructor(
         val currentCityFlow = cityRepository.getCurrentCity()
 
         currentCityFlow.filter { currentCity: City? -> currentCity?.coordinates?.equals(city.coordinates) == true }
-            .collect {weatherDataRepository.requestSingleLocationWeatherData(it!!)}
+            .collect { weatherDataRepository.requestSingleLocationWeatherData(it!!) }
     }
 }

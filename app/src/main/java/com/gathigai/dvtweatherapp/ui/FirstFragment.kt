@@ -4,15 +4,16 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.Address
 import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -37,8 +38,6 @@ import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -75,6 +74,10 @@ class FirstFragment : Fragment() {
 
     private var currentCity: City? = null
 
+    var PERMISSIONS = arrayOf(
+        Manifest.permission.ACCESS_COARSE_LOCATION
+    )
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -86,7 +89,6 @@ class FirstFragment : Fragment() {
 
     }
 
-    @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -127,64 +129,9 @@ class FirstFragment : Fragment() {
 
         }
 
-        val city = City()
-
-        if (isLocationPermissionGranted()){
-            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-            locationRequest = LocationRequest.Builder(TimeUnit.SECONDS.toMillis(60))
-                .setMinUpdateIntervalMillis(TimeUnit.SECONDS.toMillis(30))
-                .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
-                .build()
-
-            locationCallback = object : LocationCallback() {
-                override fun onLocationResult(locationResult: LocationResult) {
-                    super.onLocationResult(locationResult)
-                    locationResult.lastLocation?.let {
-                        currentLocation = it
-
-                        latitude = currentLocation?.latitude ?: 0.0
-                        longitude = currentLocation?.longitude ?: 0.0
-
-                        Timber.d("Current location is:\n lat: $latitude\n long: $longitude.")
-
-                        if (currentCity != null &&
-                            currentCity?.coordinates != null &&
-                            !currentCity?.coordinates!!.latitude.equals(latitude.toString(), true) &&
-                            !currentCity?.coordinates!!.longitude.equals(longitude.toString(), true)
-                            ) {
-
-                            val coordinates = Coordinates()
-                            coordinates.latitude = latitude.toString()
-                            coordinates.longitude = longitude.toString()
-                            city.coordinates = coordinates
-                            city.isCurrent = true
-
-                            Geocoder(requireContext()).getFromLocation(latitude, longitude, 1)
-                                .let { addresses ->
-                                    Timber.d("Address found is: ${addresses.toString()}")
-                                    if (!addresses.isNullOrEmpty()) {
-                                        coordinates.latitude = addresses[0].latitude.toString()
-                                        coordinates.longitude = addresses[0].longitude.toString()
-
-                                        city.name = addresses[0].thoroughfare
-                                        city.country = addresses[0].countryName
-                                        city.coordinates = coordinates
-                                    }
-                                }
-
-                            cityViewModel.createCity(city)
-                        }
-                    } ?: {
-                        Timber.d("Location information isn't available.")
-                    }
-                }
-            }
-
-            fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper())
-
+        if (isLocationPermissionGranted()) {
+            getLocationAndCity()
         }
-
-        weatherViewModel.getLocationData()
         val todayWeather = weatherViewModel.currentWeather
 
 
@@ -195,6 +142,9 @@ class FirstFragment : Fragment() {
                     Timber.d("Current City: $currentCity")
 
                     if (currentCity.id != null) {
+
+                        weatherViewModel.getLocationData()
+
                         viewLifecycleOwner.lifecycleScope.launch {
                             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                                 weatherViewModel.forecastWeather(currentCity).collect {
@@ -208,7 +158,7 @@ class FirstFragment : Fragment() {
                         todayWeather.collect { todayWeather ->
                             run {
                                 binding.weather = todayWeather
-                                if (todayWeather != null && !todayWeather.weather.isEmpty()) {
+                                if (todayWeather != null && todayWeather.weather.isNotEmpty()) {
                                     when (todayWeather.weather[0].main) {
                                         "Clouds", "Mist", "Smoke", "Haze", "Dust", "Fog", "Sand", "Ash", "Squall", "Tornado" -> {
                                             binding.topView.setBackgroundResource(R.drawable.forest_cloudy)
@@ -266,37 +216,32 @@ class FirstFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        val removeTask = fusedLocationProviderClient.removeLocationUpdates(locationCallback)
-        removeTask.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                Timber.d("Location Callback removed.")
-            } else {
-                Timber.d("Failed to remove Location Callback.")
+        if (::fusedLocationProviderClient.isInitialized) {
+            val removeTask = fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+            removeTask.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Timber.d("Location Callback removed.")
+                } else {
+                    Timber.d("Failed to remove Location Callback.")
+                }
             }
         }
     }
 
+    private fun hasPermissions(context: Context, permissions: Array<String>): Boolean =
+        permissions.all {
+            ActivityCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
+        }
+
     private fun isLocationPermissionGranted(): Boolean {
-        return if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ),
-                1001
-            )
+        return if (!hasPermissions(requireContext(), PERMISSIONS)) {
+            permReqLauncher.launch(PERMISSIONS)
             false
         } else {
             true
         }
+
+
     }
 
     private fun hasGps() = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
@@ -304,4 +249,95 @@ class FirstFragment : Fragment() {
     private fun hasNetwork(): Boolean =
         locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
 
+    @SuppressLint("MissingPermission")
+    private fun getLocationAndCity() {
+        val city = City()
+        fusedLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(requireActivity())
+        locationRequest = LocationRequest.Builder(TimeUnit.SECONDS.toMillis(60))
+            .setMinUpdateIntervalMillis(TimeUnit.SECONDS.toMillis(30))
+            .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
+            .build()
+
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                super.onLocationResult(locationResult)
+                locationResult.lastLocation?.let {
+                    currentLocation = it
+
+                    latitude = currentLocation?.latitude ?: 0.0
+                    longitude = currentLocation?.longitude ?: 0.0
+
+                    Timber.d("Current location is:\n lat: $latitude\n long: $longitude.")
+
+                    if (currentCity != null && (currentCity?.coordinates == null ||
+                                (!currentCity?.coordinates!!.latitude.equals(
+                                    latitude.toString(),
+                                    true
+                                ) &&
+                                        !currentCity?.coordinates!!.longitude.equals(
+                                            longitude.toString(),
+                                            true
+                                        )))
+                    ) {
+
+                        val coordinates = Coordinates()
+                        coordinates.latitude = latitude.toString()
+                        coordinates.longitude = longitude.toString()
+                        city.coordinates = coordinates
+                        city.isCurrent = true
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            Geocoder(requireContext()).getFromLocation(
+                                latitude, longitude, 1
+                            ) { addresses ->
+                                Timber.d("Address found is: ${addresses.toString()}")
+                                if (addresses.isNotEmpty()) {
+                                    coordinates.latitude = addresses[0].latitude.toString()
+                                    coordinates.longitude = addresses[0].longitude.toString()
+
+                                    city.name = addresses[0].thoroughfare
+                                    city.country = addresses[0].countryName
+                                    city.coordinates = coordinates
+                                }
+                            }
+                        } else {
+                            Geocoder(requireContext()).getFromLocation(latitude, longitude, 1)
+                                .let { addresses ->
+                                    Timber.d("Address found is: ${addresses.toString()}")
+                                    if (!addresses.isNullOrEmpty()) {
+                                        coordinates.latitude = addresses[0].latitude.toString()
+                                        coordinates.longitude = addresses[0].longitude.toString()
+
+                                        city.name = addresses[0].thoroughfare
+                                        city.country = addresses[0].countryName
+                                        city.coordinates = coordinates
+                                    }
+                                }
+                        }
+
+                        cityViewModel.createCity(city)
+                    }
+                } ?: {
+                    Timber.d("Location information isn't available.")
+                }
+            }
+        }
+
+        fusedLocationProviderClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.myLooper()
+        )
+    }
+
+    private val permReqLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            val granted = permissions.entries.all {
+                it.value
+            }
+            if (granted) {
+                getLocationAndCity()
+            }
+        }
 }
